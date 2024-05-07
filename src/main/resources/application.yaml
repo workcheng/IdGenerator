@@ -1,0 +1,16 @@
+server:
+  port: 8080
+id:
+  generator:
+    expressions:
+      # 产品标志
+      TEST:
+        # 表达式，pid指的是产品标志
+        exp: "$(pid)$(yearMonthDayHms)$(id:6:0)"
+        # 字段名:初始值:最大值:最小数量:扩容数量:初始数量:增长步长
+        initFields: ["id"]
+
+spring:
+  redis:
+    host: 192.168.0.57
+    database: 10
