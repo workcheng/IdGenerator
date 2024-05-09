@@ -1,6 +1,6 @@
 package tid
 
-import lombok.extern.slf4j.Slf4j
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -13,12 +13,18 @@ public class BinaryCompressUtil {
     private static final Logger logger = LoggerFactory.getLogger(BinaryCompressUtil.class)
 
     public static void main(String[] args) {
-        System.out.println("四位高进制最高表示数字:"+reduction("ZZZZ"));
-        System.out.println("20位高进制最高表示数字:"+reduction("ZZZZZZZZZZZZZZZZZZZZ"));
-        for (long i = 2147483647; i < 2147484647; i++) {
+        System.out.println("四位高进制最高表示数字:" + reduction("zzzz"));
+        System.out.println("最高表示编码:" + scaleTransition(Long.MAX_VALUE));
+        System.out.println("最高表示数字:" + Long.MAX_VALUE);//9223372036854775807
+//        for (long i = 2147483647; i < 2186926904752037606; i++) {
+//        for (long i = 9223372036854775807; i > 2186926904752037606; i--) {
+        for (long i = 9223372036854775807; i > 9223372036854775707; i--) {
             final String x = scaleTransition(i);
-            final Long reductionResult = reduction(x);
-            final String complete = complete(20, i);
+            final long reductionResult = reduction(x);
+            final String complete = complete(12, i);
+            if (i != reductionResult) {
+                throw new RuntimeException("错误")
+            }
             System.out.println(i + "," + x + "," + String.valueOf(reductionResult)  + "," + (i == reductionResult) + "," + complete+ "," + reduction(complete));
         }
     }
@@ -27,7 +33,8 @@ public class BinaryCompressUtil {
      * 将数字表示为字符串的所有可能字符
      */
 //    private static final String UNIT_STR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()_+={}[]:;<>";//82进制 四位表示数字最大值:45212175
-    private static final String UNIT_STR = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";//62进制 四位表示数字最大值:14776335
+    private static final String UNIT_STR = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+//62进制 四位表示数字最大值:14776335
     /**
      * 表示使用的是多少位进制
      */
@@ -39,13 +46,13 @@ public class BinaryCompressUtil {
     /**
      * 当前字符在当前进制中表示的大小 占用空间极少,但可以大大减少程序循环次数,有效提升运行效率
      */
-    private static final Map<Character,Integer> UNIT_HOW_MANY_MAP;
+    private static final Map<Character, Long> UNIT_HOW_MANY_MAP;
     static {
         UNIT_ARRAY = UNIT_STR.toCharArray();
         SCALE = UNIT_STR.length();
         UNIT_HOW_MANY_MAP = new HashMap<>();
-        for (int index = 0; index < UNIT_ARRAY.length; index++){
-            UNIT_HOW_MANY_MAP.put(UNIT_ARRAY[index],index);
+        for (int index = 0; index < UNIT_ARRAY.length; index++) {
+            UNIT_HOW_MANY_MAP.put(UNIT_ARRAY[index], index);
         }
     }
 
@@ -53,7 +60,7 @@ public class BinaryCompressUtil {
      * @date 2024-01-05
      * 进制转换 把十进制的number转换为SCALE进制 或者可以理解为把很长的数字使用字母代替
      */
-    public static String scaleTransition(Long number) {
+    public static String scaleTransition(long number) {
         StringBuilder result = new StringBuilder();
         while (number / SCALE > 0) {
             def l = number % SCALE
@@ -69,12 +76,13 @@ public class BinaryCompressUtil {
      * @date 2024-01-05
      * 把通过 scaleTransition(int)方法转换的数字重新转换的数字转换为十进制
      */
-    public static Long reduction(String number){
-        Long result = 0;
-        for (int index = 0; index <number.length(); index ++){
-            Long pow = (Long)Math.pow(SCALE,number.length() - index - 1);
-            Integer howMany = UNIT_HOW_MANY_MAP.get(number.charAt(index));
+    public static long reduction(String number) {
+        long result = 0;
+        for (int index = 0; index < number.length(); index++) {
+            long pow = (long) Math.pow(SCALE, number.length() - index - 1);
+            Long howMany = UNIT_HOW_MANY_MAP.get(number.charAt(index));
             result += howMany * pow;
+            //logger.info("result:{}, howMany:{}, pow:{}", result, howMany, pow)
         }
         return result;
     }
@@ -87,7 +95,7 @@ public class BinaryCompressUtil {
     public static String maxString(Integer length) {
         final String s = UNIT_STR.substring(UNIT_STR.length() - 1);
         StringBuilder sb = new StringBuilder();
-        for (int index = 0; index < length; index ++){
+        for (int index = 0; index < length; index++) {
             sb.append(s);
         }
         return sb.toString();
@@ -110,10 +118,10 @@ public class BinaryCompressUtil {
      */
     public static String complete(Integer length, Long raw) {
         final String maxString = maxString(length);
-        final Long reduction = reduction(maxString);
-        if (raw > reduction){
+        /*final Long reduction = reduction(maxString);
+        if (raw > reduction) {
             throw new RuntimeException("大小超过进制数最大值:" + reduction);
-        }
+        }*/
         final String scaled = scaleTransition(raw);
         return complete(length, scaled);
     }

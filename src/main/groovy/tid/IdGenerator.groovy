@@ -100,7 +100,7 @@ class IdGenerator {
     }
 
     // 执行lua脚本
-    private String executeLua(String key, Long initValue, Long maxValue, Long minCount, Long initCount, Long expansionStep, Long incrStep) {
+    private String executeLua(String key, long initValue, long maxValue, long minCount, long initCount, long expansionStep, long incrStep) {
         if (!exist(key)) {
             logger.info("key not exists:{}", key)
             // 不存在，取数据库中的最大值
@@ -151,19 +151,19 @@ class IdGenerator {
 
     private static class InitParams {
         /** 默认初始值 */
-        private static final Long DEFAULT_INIT_VALUE = 1;
+        private static final long DEFAULT_INIT_VALUE = 1;
         /** 默认最大值 */
-        private static final Long DEFAULT_MAX_VALUE = 9999;
+        private static final long DEFAULT_MAX_VALUE = 9999;
         /** 默认最小数量 */
-        private static final Long DEFAULT_MIN_COUNT = 30;
+        private static final long DEFAULT_MIN_COUNT = 30;
         /** 默认扩容数量 */
-        private static final Long DEFAULT_EXPANSION_STEP = 50;
+        private static final long DEFAULT_EXPANSION_STEP = 50;
         /** 默认初始数量 */
-        private static final Long DEFAULT_INIT_COUNT = 100;
+        private static final long DEFAULT_INIT_COUNT = 100;
         /** 默认自增步长 */
-        private static final Long DEFAULT_INCR_STEP = 1;
+        private static final long DEFAULT_INCR_STEP = 1;
 
-        private final Long[] params = [
+        private final long[] params = [
                 0,
                 DEFAULT_INIT_VALUE,
                 DEFAULT_MAX_VALUE,
@@ -175,19 +175,19 @@ class IdGenerator {
         /** 字段名称，其实就是key */
         private String fieldName;
         /** 初始值 */
-        private Long initValue;
+        private long initValue;
         /** 最大值 */
-        private Long maxValue;
+        private long maxValue;
         /** 最小数量 */
-        private Long minCount;
+        private long minCount;
         /** 扩容步长 */
-        private Long expansionStep;
+        private long expansionStep;
         /** 初始数量 */
-        private Long initCount;
+        private long initCount;
         /** 自增步长 */
-        private Long incrStep;
+        private long incrStep;
 
-        Long[] getParams() {
+        long[] getParams() {
             return params
         }
 
@@ -199,51 +199,51 @@ class IdGenerator {
             this.fieldName = fieldName
         }
 
-        Long getInitValue() {
+        long getInitValue() {
             return initValue
         }
 
-        void setInitValue(Long initValue) {
+        void setInitValue(long initValue) {
             this.initValue = initValue
         }
 
-        Long getMaxValue() {
+        long getMaxValue() {
             return maxValue
         }
 
-        void setMaxValue(Long maxValue) {
+        void setMaxValue(long maxValue) {
             this.maxValue = maxValue
         }
 
-        Long getMinCount() {
+        long getMinCount() {
             return minCount
         }
 
-        void setMinCount(Long minCount) {
+        void setMinCount(long minCount) {
             this.minCount = minCount
         }
 
-        Long getExpansionStep() {
+        long getExpansionStep() {
             return expansionStep
         }
 
-        void setExpansionStep(Long expansionStep) {
+        void setExpansionStep(long expansionStep) {
             this.expansionStep = expansionStep
         }
 
-        Long getInitCount() {
+        long getInitCount() {
             return initCount
         }
 
-        void setInitCount(Long initCount) {
+        void setInitCount(long initCount) {
             this.initCount = initCount
         }
 
-        Long getIncrStep() {
+        long getIncrStep() {
             return incrStep
         }
 
-        void setIncrStep(Long incrStep) {
+        void setIncrStep(long incrStep) {
             this.incrStep = incrStep
         }
 
