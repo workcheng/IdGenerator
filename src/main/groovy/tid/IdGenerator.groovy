@@ -33,9 +33,10 @@ class IdGenerator {
 
     private static void init() {
         def key = "IdGenerator"
-        def initValue = 1;
+//        def initValue = 1;
+        def initValue = 2147483647;
 //        initParams(key, "XM:1:14776335:30:50:100:1")
-        initParams(key, "XM:" + initValue + ":9:30:50:100:1")
+        initParams(key, "XM:" + initValue + ":2186926904752037606:30:50:100:1")
     }
 
     /**
@@ -92,14 +93,14 @@ class IdGenerator {
         def result = this.generate()
         jsonObject.put("result", result)
 
-        def codes = BinaryCompressUtil.complete(6, Integer.valueOf(result))
+        def codes = BinaryCompressUtil.complete(20, Long.valueOf(result))
         jsonObject.put("result code", codes)
         //DataFunc.insert("insert into D_JH_BHXM(FGDH,FBH,FXM,SYS_FWRITETIME) values ('"+ codes +"','"+ codes +"','"+ codes +"',current_date)", new HashMap<String, Object>())
         return jsonObject;
     }
 
     // 执行lua脚本
-    private String executeLua(String key, int initValue, int maxValue, int minCount, int initCount, int expansionStep, int incrStep) {
+    private String executeLua(String key, Long initValue, Long maxValue, Long minCount, Long initCount, Long expansionStep, Long incrStep) {
         if (!exist(key)) {
             logger.info("key not exists:{}", key)
             // 不存在，取数据库中的最大值
@@ -150,19 +151,19 @@ class IdGenerator {
 
     private static class InitParams {
         /** 默认初始值 */
-        private static final int DEFAULT_INIT_VALUE = 1;
+        private static final Long DEFAULT_INIT_VALUE = 1;
         /** 默认最大值 */
-        private static final int DEFAULT_MAX_VALUE = 9999;
+        private static final Long DEFAULT_MAX_VALUE = 9999;
         /** 默认最小数量 */
-        private static final int DEFAULT_MIN_COUNT = 30;
+        private static final Long DEFAULT_MIN_COUNT = 30;
         /** 默认扩容数量 */
-        private static final int DEFAULT_EXPANSION_STEP = 50;
+        private static final Long DEFAULT_EXPANSION_STEP = 50;
         /** 默认初始数量 */
-        private static final int DEFAULT_INIT_COUNT = 100;
+        private static final Long DEFAULT_INIT_COUNT = 100;
         /** 默认自增步长 */
-        private static final int DEFAULT_INCR_STEP = 1;
+        private static final Long DEFAULT_INCR_STEP = 1;
 
-        private final int[] params = [
+        private final Long[] params = [
                 0,
                 DEFAULT_INIT_VALUE,
                 DEFAULT_MAX_VALUE,
@@ -174,19 +175,19 @@ class IdGenerator {
         /** 字段名称，其实就是key */
         private String fieldName;
         /** 初始值 */
-        private int initValue;
+        private Long initValue;
         /** 最大值 */
-        private int maxValue;
+        private Long maxValue;
         /** 最小数量 */
-        private int minCount;
+        private Long minCount;
         /** 扩容步长 */
-        private int expansionStep;
+        private Long expansionStep;
         /** 初始数量 */
-        private int initCount;
+        private Long initCount;
         /** 自增步长 */
-        private int incrStep;
+        private Long incrStep;
 
-        int[] getParams() {
+        Long[] getParams() {
             return params
         }
 
@@ -198,51 +199,51 @@ class IdGenerator {
             this.fieldName = fieldName
         }
 
-        int getInitValue() {
+        Long getInitValue() {
             return initValue
         }
 
-        void setInitValue(int initValue) {
+        void setInitValue(Long initValue) {
             this.initValue = initValue
         }
 
-        int getMaxValue() {
+        Long getMaxValue() {
             return maxValue
         }
 
-        void setMaxValue(int maxValue) {
+        void setMaxValue(Long maxValue) {
             this.maxValue = maxValue
         }
 
-        int getMinCount() {
+        Long getMinCount() {
             return minCount
         }
 
-        void setMinCount(int minCount) {
+        void setMinCount(Long minCount) {
             this.minCount = minCount
         }
 
-        int getExpansionStep() {
+        Long getExpansionStep() {
             return expansionStep
         }
 
-        void setExpansionStep(int expansionStep) {
+        void setExpansionStep(Long expansionStep) {
             this.expansionStep = expansionStep
         }
 
-        int getInitCount() {
+        Long getInitCount() {
             return initCount
         }
 
-        void setInitCount(int initCount) {
+        void setInitCount(Long initCount) {
             this.initCount = initCount
         }
 
-        int getIncrStep() {
+        Long getIncrStep() {
             return incrStep
         }
 
-        void setIncrStep(int incrStep) {
+        void setIncrStep(Long incrStep) {
             this.incrStep = incrStep
         }
 
@@ -252,7 +253,7 @@ class IdGenerator {
             }
             for (int i = 1; i < objects.length; i++) {
                 Object obj = objects[i];
-                params[i] = CastUtil.castInt(obj);
+                params[i] = CastUtil.castLong(obj);
             }
             updateFields();
         }

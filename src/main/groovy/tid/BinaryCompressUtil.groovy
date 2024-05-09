@@ -1,17 +1,24 @@
 package tid
 
+import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 /**
  * 正数的进制转换工具
  * @author chenghui
  * @date 2024/5/6 9:00
  */
 public class BinaryCompressUtil {
+    private static final Logger logger = LoggerFactory.getLogger(BinaryCompressUtil.class)
+
     public static void main(String[] args) {
         System.out.println("四位高进制最高表示数字:"+reduction("ZZZZ"));
-        for (int i = 0; i < 999; i++) {
+        System.out.println("20位高进制最高表示数字:"+reduction("ZZZZZZZZZZZZZZZZZZZZ"));
+        for (long i = 2147483647; i < 2147484647; i++) {
             final String x = scaleTransition(i);
-            final Integer reductionResult = reduction(x);
-            final String complete = complete(6, i);
+            final Long reductionResult = reduction(x);
+            final String complete = complete(20, i);
             System.out.println(i + "," + x + "," + String.valueOf(reductionResult)  + "," + (i == reductionResult) + "," + complete+ "," + reduction(complete));
         }
     }
@@ -37,7 +44,7 @@ public class BinaryCompressUtil {
         UNIT_ARRAY = UNIT_STR.toCharArray();
         SCALE = UNIT_STR.length();
         UNIT_HOW_MANY_MAP = new HashMap<>();
-        for (int index = 0; index < UNIT_ARRAY.length; index ++){
+        for (int index = 0; index < UNIT_ARRAY.length; index++){
             UNIT_HOW_MANY_MAP.put(UNIT_ARRAY[index],index);
         }
     }
@@ -46,13 +53,15 @@ public class BinaryCompressUtil {
      * @date 2024-01-05
      * 进制转换 把十进制的number转换为SCALE进制 或者可以理解为把很长的数字使用字母代替
      */
-    public static String scaleTransition(Integer number) {
+    public static String scaleTransition(Long number) {
         StringBuilder result = new StringBuilder();
         while (number / SCALE > 0) {
-            result.append(UNIT_ARRAY[number % SCALE]);
+            def l = number % SCALE
+            //logger.info("l:{}", l)
+            result.append(UNIT_ARRAY[l.intValue()]);
             number = number / SCALE;
         }
-        result.append(UNIT_ARRAY[number]);
+        result.append(UNIT_ARRAY[number.intValue()]);
         return result.reverse().toString();
     }
 
@@ -60,10 +69,10 @@ public class BinaryCompressUtil {
      * @date 2024-01-05
      * 把通过 scaleTransition(int)方法转换的数字重新转换的数字转换为十进制
      */
-    public static Integer reduction(String number){
-        int result = 0;
+    public static Long reduction(String number){
+        Long result = 0;
         for (int index = 0; index <number.length(); index ++){
-            int pow = (int)Math.pow(SCALE,number.length() - index - 1);
+            Long pow = (Long)Math.pow(SCALE,number.length() - index - 1);
             Integer howMany = UNIT_HOW_MANY_MAP.get(number.charAt(index));
             result += howMany * pow;
         }
@@ -99,9 +108,9 @@ public class BinaryCompressUtil {
      * @param raw 原数
      * @return 补全length长度的进制数
      */
-    public static String complete(Integer length, int raw) {
+    public static String complete(Integer length, Long raw) {
         final String maxString = maxString(length);
-        final Integer reduction = reduction(maxString);
+        final Long reduction = reduction(maxString);
         if (raw > reduction){
             throw new RuntimeException("大小超过进制数最大值:" + reduction);
         }
